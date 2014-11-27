@@ -148,13 +148,10 @@ LOGGING = {
 
     # Build
     activate = path('bin/activate')
-    build = subprocess.check_call(
-        '/bin/bash',
-        cfg.get(CFG_SECTION, 'build'),
-        cwd=app_base,
-        env={'BASH_ENV': activate})
-    if build != 0:
-        raise OSError()
+    subprocess.check_call([cfg.get(CFG_SECTION, 'build')],
+                          cwd=app_base,
+                          env={'BASH_ENV': activate})
+
     # Create settings
     settings_file = path(cfg.get(CFG_SECTION, 'settings'))
     slock = LockFile(settings_file)
