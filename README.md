@@ -35,5 +35,5 @@ Available config keywords
 <dt>src</dt>
 <dd>The URL of the source code of the project.</dd>
 <dt>scm</dt>
-<dd>The source code management used (`svn' or `git' for the moment)</dd>
+<dd>The source code management used (`svn` or `git` for the moment)</dd>
 </dl>
