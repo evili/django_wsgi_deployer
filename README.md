@@ -44,7 +44,7 @@ _Default_: `name+'_production'`.
 ##### `url`
 Relative URL where the project will be deployed
 _Default_: `name`.
-##### `build': 
+##### `build`: 
 Build script used to prepare your project (relative to the projects code base).
 _Default_: `'build/build.sh'`.
 ##### `wsgi`:
