@@ -138,7 +138,7 @@ LOGGING = {
     # Checkout
     subprocess.check_call([
         cfg.get(CFG_SECTION, 'scm'),
-        cfg.get(CFG_SECTION, 'clone'),
+        cfg.get(CFG_SECTION, 'scm_clone'),
         cfg.get(CFG_SECTION, 'src'),
         path(cfg.get(CFG_SECTION, 'dst')),
     ],
