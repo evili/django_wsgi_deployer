@@ -157,7 +157,7 @@ LOGGING = {
                           env={'BASH_ENV': activate})
 
     # Create settings
-    settings_file = path(cfg.get(CFG_SECTION, 'settings'))
+    settings_file = path(cfg.get(CFG_SECTION, 'settings'))+'.py'
     slock = LockFile(settings_file)
     slock.acquire()
 
@@ -174,7 +174,7 @@ LOGGING = {
 
     # Create apache conf
     conf_file = os.path.join(HTTPD_CONF_DIR,
-                             cfg.get(CFG_SECTION, 'settings'))
+                             cfg.get(CFG_SECTION, 'name'))+'.conf'
     slock = LockFile(conf_file)
     slock.acquire()
 
