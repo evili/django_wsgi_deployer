@@ -56,7 +56,7 @@ from %(name)s.settings import *
 DEBUG=False
 TEMPLATE_DEBUG=DEBUG
 
-ALLOWED_HOSTS = ['%(allowed_host)s']
+ALLOWED_HOSTS = ['%(allowed_hosts)s']
 SECRET_KEY='%(secret_key)s'
 
 MEDIA_ROOT='%(media_root)s'
