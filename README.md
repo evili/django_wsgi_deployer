@@ -12,6 +12,21 @@ Then you could edit a config file like this:
     src = http://source/of/your/repo/myproject
     scm = svn
 
+
+Quick Usage
+-----------
+    # only the first time
+    pip install django_deployer
+    # where the wsgi scripts are served
+    cd /var/www/wsgi
+    # edit config (see below)
+    vim myproject.conf
+    # deploy
+    djdeploy.py myproject
+    # reload apache
+    systemctl reload httpd
+
+
 Available config keywords
 -------------------------
 <dl>
