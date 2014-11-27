@@ -112,8 +112,11 @@ LOGGING = {
 """,
     }
 
+    # Load defaults
     cfg = SafeConfigParser(app_defaults)
-    cfg.read(os.path.join(app, '.conf'))
+
+    # Force read
+    cfg.readfp(open(app+'.conf','r'))
 
     # Create directory
     os.mkdir(app_base)
