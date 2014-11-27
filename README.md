@@ -44,10 +44,10 @@ _Default_: `name+'_production'`.
 ##### `url`
 Relative URL where the project will be deployed
 _Default_: `name`.
-##### `build`: 
+##### `build`
 Build script used to prepare your project (relative to the projects code base).
 _Default_: `'build/build.sh'`.
-##### `wsgi`:
+##### `wsgi`
 WSGI script name.
 _Default_:`'wsgi.py'`
 ##### `allowed_hosts`
@@ -66,7 +66,7 @@ _Default_: `os.path.join(HTTPD_STATIC_BASE, name)`
 Additional settings that will go into the final `settings` module (tipically DATABASES definition, etc).
 _Default_:
 
-    LOGGING = {
+     LOGGING = {
       'version': 1,
       'disable_existing_loggers': False,
       'handlers': {
@@ -83,7 +83,4 @@ _Default_:
           'propagate': True,
         }
       }
-    }
-    
-
-
+     }
