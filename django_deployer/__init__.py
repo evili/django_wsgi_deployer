@@ -148,7 +148,11 @@ LOGGING = {
 
     # Build
     activate = path('bin/activate')
-    subprocess.check_call([cfg.get(CFG_SECTION, 'build')],
+    build = os.path.join(
+        cfg.get(CFG_SECTION, 'dst'),
+        cfg.get(CFG_SECTION, 'build')
+    )
+    subprocess.check_call([build],
                           cwd=app_base,
                           env={'BASH_ENV': activate})
 
