@@ -36,7 +36,7 @@ The URL of the source code of the project (*mandatory*).
 ##### `scm`
 The source code management used (`svn`, `git`, or `hg` for the moment).
 _Default_: `'git'`.
-##### `clone`
+##### `scm_clone`
 The SCM command to clone (aka: checkout) the source tree.
 _Default_: `'clone'`
 ##### `dst`

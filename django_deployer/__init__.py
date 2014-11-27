@@ -96,7 +96,7 @@ def deploy_django_app(app):
                                           ).strip(),
         'media_root': os.path.join(HTTPD_MEDIA_BASE, app),
         'static_root': os.path.join(HTTPD_STATIC_BASE, app),
-        'scm': '/usr/bin/svn',
+        'scm': '/usr/bin/git',
         'settings_append': """
 LOGGING = {
   'version': 1,
@@ -105,7 +105,7 @@ LOGGING = {
     'file': {
       'level': 'DEBUG',
       'class': 'logging.FileHandler',
-      'filename': '/var/tmp/%(name)-wsgi.log',
+      'filename': '/var/tmp/%(name)s-wsgi.log',
     },
   },
   'loggers': {
