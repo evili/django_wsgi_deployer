@@ -34,8 +34,11 @@ The Name of the project or application to deploy (*mandatory*)
 ##### `src`
 The URL of the source code of the project (*mandatory*).
 ##### `scm`
-The source code management used (`svn` or `git` for the moment).
-_Default_: `'svn'`.
+The source code management used (`svn`, `git`, or `hg` for the moment).
+_Default_: `'git'`.
+##### `clone`
+The SCM command to clone (aka: checkout) the source tree.
+_Default_: `'clone'`
 ##### `dst`
 Destination directory.
 ##### `settings`

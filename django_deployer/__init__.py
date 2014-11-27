@@ -27,6 +27,12 @@ HTTPD_STATIC_BASE = os.environ.get('HTTPD_STATIC_BASE',
 SECRET_KEY_GEN = os.environ.get('SECRET_KEY_GEN',
                                 '/usr/bin/pwgen -c -n -y 78 1')
 
+SCM_DEFAULT_CHECKOUT = {
+    'svn': 'co',
+    'git': 'clone',
+    'hg': 'clone',
+}
+
 CFG_SECTION = 'deploy'
 
 WSGI_TEMPLATE = """
@@ -90,6 +96,7 @@ def deploy_django_app(app):
                                           ).strip(),
         'media_root': os.path.join(HTTPD_MEDIA_BASE, app),
         'static_root': os.path.join(HTTPD_STATIC_BASE, app),
+        'scm': '/usr/bin/svn',
         'settings_append': """
 LOGGING = {
   'version': 1,
@@ -112,11 +119,15 @@ LOGGING = {
 """,
     }
 
+    # Choose clone command
+    app_defaults['scm_clone'] = SCM_DEFAULT_CHECKOUT[os.path.split(
+        app_defaults['scm'])[-1]]
+
     # Load defaults
     cfg = SafeConfigParser(app_defaults)
 
     # Force read
-    cfg.readfp(open(app+'.conf','r'))
+    cfg.readfp(open(app+'.conf', 'r'))
 
     # Create directory
     os.mkdir(app_base)
@@ -126,9 +137,14 @@ LOGGING = {
 
     # Checkout
     subprocess.check_call([
-        '/usr/bin/svn', 'co', cfg.get(CFG_SECTION, 'src'),
+        cfg.get(CFG_SECTION, 'scm'),
+        cfg.get(CFG_SECTION, 'clone'),
+        cfg.get(CFG_SECTION, 'src'),
         path(cfg.get(CFG_SECTION, 'dst')),
-    ])
+    ],
+    stdin=sys.stdin,
+    stdout=sys.stdout,
+    stderr=sys.stderr)
 
     # Build
     activate = path('bin/activate')
