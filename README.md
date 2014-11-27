@@ -31,9 +31,9 @@ Available config keywords
 -------------------------
 <dl>
 <dt>name</dt>
-<dd>The Name of the project or application to deploy.</dd>
+<dd>The Name of the project or application to deploy (_mandatory_).</dd>
 <dt>src</dt>
-<dd>The URL of the source code of the project.</dd>
+<dd>The URL of the source code of the project (_mandatory_).</dd>
 <dt>scm</dt>
-<dd>The source code management used (`svn` or `git` for the moment)</dd>
+<dd>The source code management used (`svn` or `git` for the moment).<br/>_Default `svn`_.</dd>
 </dl>
