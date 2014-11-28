@@ -1,14 +1,18 @@
+"""
+Test suite for django_deployer
+"""
 from __future__ import print_function
-
 from unittest import TestCase
 import tempfile
 import os
+import shutil
 
 import django_deployer
 
 
 class TestDeploy(TestCase):
-
+    """Base Class For Deploy Tests. It creates a root environment to
+    simulate server directories (wsgi, conf, etc.)"""
     def setUp(self):
         self.root = tempfile.mkdtemp(prefix='test_dj_deploy-', suffix='.d')
         self.wsgi_base = os.path.join(self.root, 'wsgi')
@@ -19,13 +23,17 @@ class TestDeploy(TestCase):
         os.mkdir(self.wsgi_base)
         os.mkdir(self.httpd_conf)
 
+    def tearDown(self):
+        shutil.rmtree(self.root)
+
 
 class TestSimpleProject(TestDeploy):
-
+    """Test deploy the simplest Django project"""
     def test_deploy(self):
+        """Deploy the simplest Django project"""
         test_proj = 'django_test_deploy'
         test_cf = os.path.join(self.root, test_proj+'.cfg')
-        test_cf_h = open(test_cf,'w')
+        test_cf_h = open(test_cf, 'w')
         print('[deploy]', file=test_cf_h)
         print('name=django_test_deploy', file=test_cf_h)
         print('src=https://github.com/evili/'+test_proj+'.git', file=test_cf_h)

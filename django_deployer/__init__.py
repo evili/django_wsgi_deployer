@@ -57,11 +57,11 @@ STATIC_ROOT='%(static_root)s'
 """
 
 HTTPD_CONF_TEMPLATE = """
-WSGIDaemonProcess %(name)s processes=1 threads=4 display-name=%{GROUP} python-path=%(site_libs)s umask=002
+WSGIDaemonProcess %(name)s processes=1 threads=4 display-name=%%{GROUP} python-path=%(site_libs)s umask=002
 <Directory %(app_base)s>
 WSGIProcessGroup %(name)s
 </Directory>
-WSGIScriptAlias %(url)s %(app_base)/%(wsgi)
+WSGIScriptAlias %(url)s %(app_base)s/%(wsgi)s
 """
 
 WSGI_PYTHON_PATH = u'^%s.*site-packages$'
@@ -188,6 +188,22 @@ LOGGING = {
     finally:
         slock.release()
 
+    # Create wsgi script
+    wsgi_file = path(cfg.get(CFG_SECTION, 'wsgi'))
+    slock = LockFile(wsgi_file)
+    slock.acquire()
+
+    if os.path.exists(wsgi_file):
+        slock.release()
+        raise IOError([17, 'File exists'])
+    try:
+        wfp = open(wsgi_file, 'w')
+        print(WSGI_TEMPLATE % dict(cfg.items(CFG_SECTION)),
+              file=wfp)
+        wfp.close()
+    finally:
+        slock.release()
+
     # Create apache conf
     conf_file = os.path.join(HTTPD_CONF_DIR,
                              cfg.get(CFG_SECTION, 'name'))+'.conf'
@@ -202,7 +218,7 @@ LOGGING = {
         conf = dict(cfg.items(CFG_SECTION))
         rlib = re.compile(WSGI_PYTHON_PATH % app_base)
         libs = [p for p in sys.path if rlib.match(p)]
-        conf['site_libs'] = ':'.join(libs)
+        conf['site_libs'] = os.path.join(virtualenv.path_locations(app_base)[1], 'site-packages')
         http_conf = HTTPD_CONF_TEMPLATE % conf
         print(http_conf,
               file=sfp)
