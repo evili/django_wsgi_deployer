@@ -1,8 +1,27 @@
 from setuptools import setup
 
+def readme():
+    with open('README.md') as f:
+        return f.read()
+
 setup(name='django_deployer',
       version='0.1',
       description='Django Project Deployer',
+      classifiers=[
+          'Development Status :: 3 - Alpha',
+          'Environment :: Console',
+          'Framework :: Django',
+          'Intended Audience :: Developers',
+          'Intended Audience :: System Administrators',
+          'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
+          'Natural Language :: English',
+          'Operating System :: POSIX',
+          'Programming Language :: Python',
+          'Topic :: Internet :: WWW/HTTP :: WSGI',
+          'Topic :: Utilities',
+      ],
+      keywords = 'django wsgi apache deployment',
+      
       url='https://devel.iri.upc.edu/iritic/scripts/trunk/django_deployer',
       author='Evili del Rio',
       author_email='evili.del.rio@gmail.com',
@@ -10,6 +29,8 @@ setup(name='django_deployer',
       requires=['virtualenv', 'lockfile'],
       packages=['django_deployer'],
       scripts=['djdeploy.py'],
+      test_suite='nose.collector',
+      tests_require=['nose'],
       zip_safe=False)
 
 

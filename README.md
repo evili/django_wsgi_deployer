@@ -5,8 +5,9 @@ Django Projects Deployer tries to automate deploying of Django projects/apps int
 existing Apache/WSGI server.
 
 You should prepare your apache httpd to serve WSGI scripts from a certain directory (default: /var/www/wsgi).
-Then you could edit a config file like this:
+Then you could edit a cfg file like this:
 
+###### myproject.cfg
     [deploy]
     name = myproject
     src = http://source/of/your/repo/myproject
@@ -20,15 +21,15 @@ Quick Usage
     # where the wsgi scripts are served
     cd /var/www/wsgi
     # edit config (see below)
-    vim myproject.conf
+    vim myproject.cfg
     # deploy
     djdeploy.py myproject
     # reload apache
     systemctl reload httpd
 
 
-Available config keywords
--------------------------
+Config keywords
+---------------
 ##### `name`
 The Name of the project or application to deploy (*mandatory*)
 ##### `src`
@@ -87,3 +88,34 @@ _Default_:
         }
       }
      }
+
+
+Environment Variables
+---------------------
+
+##### `WSGI_BASE_PATH`
+Directory were the Django projects will be deployed.
+_Default_: `/var/www/wsgi`
+
+##### `HTTPD_CONF_DIR`
+Directory were the apache httpd .conf files will be installed.
+_Default_: `/etc/httpd/locations.d`
+
+##### `HTTPD_HOST`
+Host name under which the Django projects will be
+authrized to run (`ALLOWED_HOSTS`settings).
+_Default_: Default hostname.
+
+##### `HTTPD_MEDIA_BASE`
+Directory under wich the media files will be stored. By default, each
+project will create a subdirectory under it.
+_Default_: `/var/www/media`
+
+##### `HTTPD_STATIC_BASE`
+Directory under wich the static files will be collected. By default, each
+project will create a subdirectory under it.
+_Default_: `/var/www/static`
+
+##### `SECRET_KEY_GEN`
+Command to generate the `SECRET_KEY` in Django settings.
+_Default_: `/usr/bin/pwgen -c -n -y 78 1| /usr/bin/tr -d "%"`

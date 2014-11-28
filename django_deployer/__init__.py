@@ -10,22 +10,12 @@ import subprocess
 import virtualenv
 import re
 import platform
+import logging
 
 from ConfigParser import SafeConfigParser
 from lockfile import LockFile
 
-WSGI_BASE_PATH = os.environ.get('WSGI_BASE_PATH',
-                                '/var/www/wsgi')
-HTTPD_CONF_DIR = os.environ.get('HTTPD_CONF_DIR',
-                                '/etc/httpd/locations.d')
-HTTPD_HOST = os.environ.get('HTTPD_HOST',
-                            platform.node())
-HTTPD_MEDIA_BASE = os.environ.get('HTTPD_MEDIA_BASE',
-                                  '/var/www/html/media')
-HTTPD_STATIC_BASE = os.environ.get('HTTPD_STATIC_BASE',
-                                   '/var/www/html/static')
-SECRET_KEY_GEN = os.environ.get('SECRET_KEY_GEN',
-                                '/usr/bin/pwgen -c -n -y 78 1')
+logger = logging.getLogger(__name__)
 
 SCM_DEFAULT_CHECKOUT = {
     'svn': 'co',
@@ -74,14 +64,34 @@ WSGIProcessGroup %(name)s
 WSGIScriptAlias %(url)s %(app_base)/%(wsgi)
 """
 
-WSGI_PYTHON_PATH = u'^%(app_base).*site-packages$'
+WSGI_PYTHON_PATH = u'^%s.*site-packages$'
 
 def deploy_django_app(app):
     """
     Deploy a Django application
     """
+
+
+    # logger.debug('ENVIRONMENT:')
+    # for k in ('WSGI_BASE_PATH', 'HTTPD_CONF_DIR',):
+    #     logger.debug('  %s=%s', k, os.environ.get(k, None))
+
+    WSGI_BASE_PATH = os.environ.get('WSGI_BASE_PATH',
+                                    '/var/www/wsgi')
+    HTTPD_CONF_DIR = os.environ.get('HTTPD_CONF_DIR',
+                                    '/etc/httpd/locations.d')
+    HTTPD_HOST = os.environ.get('HTTPD_HOST',
+                                platform.node())
+    HTTPD_MEDIA_BASE = os.environ.get('HTTPD_MEDIA_BASE',
+                                      '/var/www/html/media')
+    HTTPD_STATIC_BASE = os.environ.get('HTTPD_STATIC_BASE',
+                                       '/var/www/html/static')
+    SECRET_KEY_GEN = os.environ.get('SECRET_KEY_GEN',
+                                    '/usr/bin/pwgen -c -n -y 78 1')
+
     app_base = os.path.join(WSGI_BASE_PATH, app)
     path = lambda p: os.path.join(app_base, p)
+
 
     app_defaults = {
         'name': app,
@@ -119,6 +129,9 @@ LOGGING = {
 """,
     }
 
+    # Protect '%' from interpolation
+    app_defaults['secret_key'] = re.sub(r'%',r'', 
+                                        app_defaults['secret_key'])
     # Choose clone command
     app_defaults['scm_clone'] = SCM_DEFAULT_CHECKOUT[os.path.split(
         app_defaults['scm'])[-1]]
@@ -127,7 +140,11 @@ LOGGING = {
     cfg = SafeConfigParser(app_defaults)
 
     # Force read
-    cfg.readfp(open(app+'.conf', 'r'))
+    cfg.readfp(open(app+'.cfg', 'r'))
+
+    #logger.debug('Final configuration:')
+    #for k,v in cfg.items(CFG_SECTION):
+    #    logger.debug('\t%s: %s', k, v)
 
     # Create directory
     os.mkdir(app_base)
@@ -143,7 +160,6 @@ LOGGING = {
         path(cfg.get(CFG_SECTION, 'dst')),
     ],
     stdin=sys.stdin,
-    stdout=sys.stdout,
     stderr=sys.stderr)
 
     # Build
@@ -187,7 +203,8 @@ LOGGING = {
         rlib = re.compile(WSGI_PYTHON_PATH % app_base)
         libs = [p for p in sys.path if rlib.match(p)]
         conf['site_libs'] = ':'.join(libs)
-        print(HTTPD_CONF_TEMPLATE % conf,
+        http_conf = HTTPD_CONF_TEMPLATE % conf
+        print(http_conf,
               file=sfp)
         sfp.close()
     finally:
