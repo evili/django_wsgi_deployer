@@ -29,16 +29,24 @@ class TestDeploy(TestCase):
 
 class TestSimpleProject(TestDeploy):
     """Test deploy the simplest Django project"""
-    def test_deploy(self):
-        """Deploy the simplest Django project"""
-        test_proj = 'django_test_deploy'
-        test_cf = os.path.join(self.root, test_proj+'.cfg')
+    def setUp(self):
+        super(TestSimpleProject, self).setUp()
+        self.test_proj = 'django_test_deploy'
+        self.test_cf = os.path.join(self.root, test_proj+'.cfg')
         test_cf_h = open(test_cf, 'w')
         print('[deploy]', file=test_cf_h)
         print('name=django_test_deploy', file=test_cf_h)
         print('src=https://github.com/evili/'+test_proj+'.git', file=test_cf_h)
         print('scm=git', file=test_cf_h)
         test_cf_h.close()
-        self.assertTrue(django_deployer.deploy_django_app(test_proj),
+
+    def test_deploy(self):
+        """Deploy the simplest Django project"""
+        self.assertTrue(django_deployer.deploy_django_app(self.test_proj),
                         msg='Could not deploy {0} project'.format(
-                            test_proj))
+                            self.test_proj))
+
+class TestDjDeployScropt(TestSimpleProject):
+    """Test the djdeploy script"""
+    def test_djdeploy_script(self):
+        
