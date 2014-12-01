@@ -29,7 +29,7 @@ Quick Usage
     # edit config (see below)
     vim myproject.cfg
     # deploy
-    djdeploy.py myproject
+    django_wsgi_deploy myproject
     # reload apache
     systemctl reload httpd
 
