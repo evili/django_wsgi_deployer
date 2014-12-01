@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
- Deploy Django Applications into HTTPD Wsgi Container
+ Deploy Django Projects into HTTPD Wsgi Container
 """
 from __future__ import print_function
 
@@ -16,7 +16,7 @@ from ConfigParser import SafeConfigParser
 from lockfile import LockFile
 
 
-__all__ = ['deploy_django_app', 'DEFAULT_SETTINGS_APPEND']
+__all__ = ['deploy_django', 'DEFAULT_SETTINGS_APPEND']
 
 logger = logging.getLogger(__name__)
 
@@ -82,17 +82,17 @@ STATIC_ROOT='%(static_root)s'
 
 HTTPD_CONF_TEMPLATE = """
 WSGIDaemonProcess %(name)s processes=1 threads=4 display-name=%%{GROUP} python-path=%(site_libs)s umask=002
-<Directory %(app_base)s>
+<Directory %(proj_base)s>
 WSGIProcessGroup %(name)s
 </Directory>
-WSGIScriptAlias %(url)s %(app_base)s/%(wsgi)s
+WSGIScriptAlias %(url)s %(proj_base)s/%(wsgi)s
 """
 
 WSGI_PYTHON_PATH = u'^%s.*site-packages$'
 
-def deploy_django_app(app):
+def deploy_django(proj):
     """
-    Deploy a Django application
+    Deploy a Django project
     """
 
     wsgi_base_path = os.environ.get('WSGI_BASE_PATH',
@@ -108,13 +108,13 @@ def deploy_django_app(app):
     secret_key_gen = os.environ.get('SECRET_KEY_GEN',
                                     '/usr/bin/pwgen -c -n -y 78 1')
 
-    app_base = os.path.join(wsgi_base_path, app)
-    path = lambda p: os.path.join(app_base, p)
+    proj_base = os.path.join(wsgi_base_path, proj)
+    path = lambda p: os.path.join(proj_base, p)
 
 
-    app_defaults = {
-        'name': app,
-        'app_base': app_base,
+    proj_defaults = {
+        'name': proj,
+        'proj_base': proj_base,
         'dst': '%(name)s-project',
         'settings': '%(name)s_production',
         'url': '/%(name)s',
@@ -123,34 +123,34 @@ def deploy_django_app(app):
         'allowed_hosts': httpd_host,
         'secret_key': subprocess.check_output(secret_key_gen.split()
                                           ).strip(),
-        'media_root': os.path.join(httpd_media_base, app),
-        'static_root': os.path.join(httpd_static_base, app),
+        'media_root': os.path.join(httpd_media_base, proj),
+        'static_root': os.path.join(httpd_static_base, proj),
         'scm': '/usr/bin/git',
         'settings_append': DEFAULT_SETTINGS_APPEND,
     }
 
     # Protect '%' from interpolation
-    app_defaults['secret_key'] = re.sub(r'%', r'',
-                                        app_defaults['secret_key'])
+    proj_defaults['secret_key'] = re.sub(r'%', r'',
+                                        proj_defaults['secret_key'])
     # Choose clone command
-    app_defaults['scm_clone'] = SCM_DEFAULT_CHECKOUT[os.path.split(
-        app_defaults['scm'])[-1]]
+    proj_defaults['scm_clone'] = SCM_DEFAULT_CHECKOUT[os.path.split(
+        proj_defaults['scm'])[-1]]
 
     # Load defaults
-    cfg = SafeConfigParser(app_defaults)
+    cfg = SafeConfigParser(proj_defaults)
 
     # Force read
-    cfg.readfp(open(app+'.cfg', 'r'))
+    cfg.readfp(open(proj+'.cfg', 'r'))
 
     #logger.debug('Final configuration:')
     #for k,v in cfg.items(CFG_SECTION):
     #    logger.debug('\t%s: %s', k, v)
 
     # Create directory
-    os.mkdir(app_base)
+    os.mkdir(proj_base)
 
     # Virtualenv
-    virtualenv.create_environment(app_base)
+    virtualenv.create_environment(proj_base)
 
     # Checkout
     subprocess.check_call([
@@ -169,7 +169,7 @@ def deploy_django_app(app):
         cfg.get(CFG_SECTION, 'build')
     )
     subprocess.check_call([build],
-                          cwd=app_base,
+                          cwd=proj_base,
                           env={'BASH_ENV': activate})
 
     # Create settings
@@ -217,7 +217,7 @@ def deploy_django_app(app):
         sfp = open(conf_file, 'w')
         conf = dict(cfg.items(CFG_SECTION))
         conf['site_libs'] = os.path.join(
-            virtualenv.path_locations(app_base)[1],
+            virtualenv.path_locations(proj_base)[1],
             'site-packages')
         http_conf = HTTPD_CONF_TEMPLATE % conf
         print(http_conf,

@@ -1,5 +1,5 @@
 """
-Test suite for django_deployer
+Test suite for django_wsgi_deployer
 """
 from __future__ import print_function
 from unittest import TestCase
@@ -8,7 +8,7 @@ import os
 import sys
 import shutil
 
-import django_deployer
+import django_wsgi_deployer
 
 
 class TestDeploy(TestCase):
@@ -44,6 +44,6 @@ class TestSimpleProject(TestDeploy):
 
     def test_deploy(self):
         """Deploy the simplest Django project"""
-        self.assertTrue(django_deployer.deploy_django_app(self.test_proj),
+        self.assertTrue(django_wsgi_deployer.deploy_django(self.test_proj),
                         msg='Could not deploy {0} project'.format(
                             self.test_proj))
