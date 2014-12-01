@@ -15,6 +15,9 @@ import logging
 from ConfigParser import SafeConfigParser
 from lockfile import LockFile
 
+
+__all__ = ['deploy_django_app', 'DEFAULT_SETTINGS_APPEND']
+
 logger = logging.getLogger(__name__)
 
 SCM_DEFAULT_CHECKOUT = {
@@ -38,6 +41,27 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "%(settings)s")
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
+"""
+
+DEFAULT_SETTINGS_APPEND = """
+LOGGING = {
+  'version': 1,
+  'disable_existing_loggers': False,
+  'handlers': {
+    'file': {
+      'level': 'DEBUG',
+      'class': 'logging.FileHandler',
+      'filename': '/var/tmp/%(name)s-wsgi.log',
+    },
+  },
+  'loggers': {
+    '': {
+      'handlers': ['file'],
+      'level': 'WARNING',
+      'propagate': True,
+    }
+  }
+}
 """
 
 DJANGO_SETTINGS_TEMPLATE = """
@@ -71,25 +95,20 @@ def deploy_django_app(app):
     Deploy a Django application
     """
 
-
-    # logger.debug('ENVIRONMENT:')
-    # for k in ('WSGI_BASE_PATH', 'HTTPD_CONF_DIR',):
-    #     logger.debug('  %s=%s', k, os.environ.get(k, None))
-
-    WSGI_BASE_PATH = os.environ.get('WSGI_BASE_PATH',
+    wsgi_base_path = os.environ.get('WSGI_BASE_PATH',
                                     '/var/www/wsgi')
-    HTTPD_CONF_DIR = os.environ.get('HTTPD_CONF_DIR',
+    httpd_conf_dir = os.environ.get('HTTPD_CONF_DIR',
                                     '/etc/httpd/locations.d')
-    HTTPD_HOST = os.environ.get('HTTPD_HOST',
+    httpd_host = os.environ.get('HTTPD_HOST',
                                 platform.node())
-    HTTPD_MEDIA_BASE = os.environ.get('HTTPD_MEDIA_BASE',
+    httpd_media_base = os.environ.get('HTTPD_MEDIA_BASE',
                                       '/var/www/html/media')
-    HTTPD_STATIC_BASE = os.environ.get('HTTPD_STATIC_BASE',
+    httpd_static_base = os.environ.get('HTTPD_STATIC_BASE',
                                        '/var/www/html/static')
-    SECRET_KEY_GEN = os.environ.get('SECRET_KEY_GEN',
+    secret_key_gen = os.environ.get('SECRET_KEY_GEN',
                                     '/usr/bin/pwgen -c -n -y 78 1')
 
-    app_base = os.path.join(WSGI_BASE_PATH, app)
+    app_base = os.path.join(wsgi_base_path, app)
     path = lambda p: os.path.join(app_base, p)
 
 
@@ -101,36 +120,17 @@ def deploy_django_app(app):
         'url': '/%(name)s',
         'build': 'build/build.sh',
         'wsgi': 'wsgi.py',
-        'allowed_hosts': HTTPD_HOST,
-        'secret_key': subprocess.check_output(SECRET_KEY_GEN.split()
+        'allowed_hosts': httpd_host,
+        'secret_key': subprocess.check_output(secret_key_gen.split()
                                           ).strip(),
-        'media_root': os.path.join(HTTPD_MEDIA_BASE, app),
-        'static_root': os.path.join(HTTPD_STATIC_BASE, app),
+        'media_root': os.path.join(httpd_media_base, app),
+        'static_root': os.path.join(httpd_static_base, app),
         'scm': '/usr/bin/git',
-        'settings_append': """
-LOGGING = {
-  'version': 1,
-  'disable_existing_loggers': False,
-  'handlers': {
-    'file': {
-      'level': 'DEBUG',
-      'class': 'logging.FileHandler',
-      'filename': '/var/tmp/%(name)s-wsgi.log',
-    },
-  },
-  'loggers': {
-    '': {
-      'handlers': ['file'],
-      'level': 'WARNING',
-      'propagate': True,
-    }
-  }
-}
-""",
+        'settings_append': DEFAULT_SETTINGS_APPEND,
     }
 
     # Protect '%' from interpolation
-    app_defaults['secret_key'] = re.sub(r'%',r'', 
+    app_defaults['secret_key'] = re.sub(r'%', r'',
                                         app_defaults['secret_key'])
     # Choose clone command
     app_defaults['scm_clone'] = SCM_DEFAULT_CHECKOUT[os.path.split(
@@ -205,7 +205,7 @@ LOGGING = {
         slock.release()
 
     # Create apache conf
-    conf_file = os.path.join(HTTPD_CONF_DIR,
+    conf_file = os.path.join(httpd_conf_dir,
                              cfg.get(CFG_SECTION, 'name'))+'.conf'
     slock = LockFile(conf_file)
     slock.acquire()
@@ -216,9 +216,9 @@ LOGGING = {
     try:
         sfp = open(conf_file, 'w')
         conf = dict(cfg.items(CFG_SECTION))
-        rlib = re.compile(WSGI_PYTHON_PATH % app_base)
-        libs = [p for p in sys.path if rlib.match(p)]
-        conf['site_libs'] = os.path.join(virtualenv.path_locations(app_base)[1], 'site-packages')
+        conf['site_libs'] = os.path.join(
+            virtualenv.path_locations(app_base)[1],
+            'site-packages')
         http_conf = HTTPD_CONF_TEMPLATE % conf
         print(http_conf,
               file=sfp)

@@ -5,6 +5,7 @@ from __future__ import print_function
 from unittest import TestCase
 import tempfile
 import os
+import sys
 import shutil
 
 import django_deployer
@@ -32,11 +33,12 @@ class TestSimpleProject(TestDeploy):
     def setUp(self):
         super(TestSimpleProject, self).setUp()
         self.test_proj = 'django_test_deploy'
-        self.test_cf = os.path.join(self.root, test_proj+'.cfg')
-        test_cf_h = open(test_cf, 'w')
+        self.test_cf = os.path.join(self.root, self.test_proj+'.cfg')
+        test_cf_h = open(self.test_cf, 'w')
         print('[deploy]', file=test_cf_h)
         print('name=django_test_deploy', file=test_cf_h)
-        print('src=https://github.com/evili/'+test_proj+'.git', file=test_cf_h)
+        print('src=https://github.com/evili/'+self.test_proj+'.git',
+              file=test_cf_h)
         print('scm=git', file=test_cf_h)
         test_cf_h.close()
 
@@ -45,8 +47,3 @@ class TestSimpleProject(TestDeploy):
         self.assertTrue(django_deployer.deploy_django_app(self.test_proj),
                         msg='Could not deploy {0} project'.format(
                             self.test_proj))
-
-class TestDjDeployScropt(TestSimpleProject):
-    """Test the djdeploy script"""
-    def test_djdeploy_script(self):
-        
