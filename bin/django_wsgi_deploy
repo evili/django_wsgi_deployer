@@ -8,7 +8,7 @@ import sys
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage:", sys.argv[0], "appname1 [appname2...]")
+        print("Usage:", sys.argv[0], "project_name1 [project_name2...]")
         sys.exit(1)
 
     for a in sys.argv[1:]:
