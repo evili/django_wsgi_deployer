@@ -5,7 +5,6 @@ from __future__ import print_function
 from unittest import TestCase
 import tempfile
 import os
-import sys
 import shutil
 
 import django_wsgi_deployer
@@ -34,16 +33,30 @@ class TestSimpleProject(TestDeploy):
         super(TestSimpleProject, self).setUp()
         self.test_proj = 'django_test_deploy'
         self.test_cf = os.path.join(self.root, self.test_proj+'.cfg')
-        test_cf_h = open(self.test_cf, 'w')
-        print('[deploy]', file=test_cf_h)
-        print('name=django_test_deploy', file=test_cf_h)
+        self.test_cf_h = open(self.test_cf, 'w', buffering=1)
+        print('[deploy]', file=self.test_cf_h)
         print('src=https://github.com/evili/'+self.test_proj+'.git',
-              file=test_cf_h)
-        print('scm=git', file=test_cf_h)
-        test_cf_h.close()
+              file=self.test_cf_h)
+        print('scm=git', file=self.test_cf_h)
+        print('requires=django-resto')
 
     def test_deploy(self):
         """Deploy the simplest Django project"""
         self.assertTrue(django_wsgi_deployer.deploy_django(self.test_proj),
                         msg='Could not deploy {0} project'.format(
                             self.test_proj))
+
+    def test_deploy_with_single_requirement(self):
+        print('name=django_test_deploy', file=self.test_cf_h)
+        self.assertTrue(django_wsgi_deployer.deploy_django(self.test_proj),
+                        msg='Could not deploy {0} project with requirement'.\
+                        format(self.test_proj))
+
+    def test_deploy_with_requirements(self):
+        print('name=django_test_deploy', file=self.test_cf_h)
+        self.assertTrue(django_wsgi_deployer.deploy_django(self.test_proj),
+                        msg='Could not deploy {0} project with requirements'.\
+                        format(self.test_proj))
+        
+    def tearDown(self):
+        self.test_cf_h.close()

@@ -127,6 +127,7 @@ def deploy_django(proj):
         'static_root': os.path.join(httpd_static_base, proj),
         'scm': '/usr/bin/git',
         'settings_append': DEFAULT_SETTINGS_APPEND,
+        'deploy_requires': None,
     }
 
     # Protect '%' from interpolation
@@ -171,6 +172,18 @@ def deploy_django(proj):
     subprocess.check_call([build],
                           cwd=proj_base,
                           env={'BASH_ENV': activate})
+
+    # Install Deploy Requiremts
+    deploy_requires = cfg.get(CFG_SECTION, 'deploy_requires')
+    if deploy_requires:
+        cmd = [os.path.join(virtualenv.path_locations()[-1],
+                            'pip')
+               , 'install']
+        if isinstance(deploy_requires, 'basestring'):
+            cmd.append(deploy_requires)
+        else:
+            cmd.extend(deploy_requires)
+        subprocess.check_call(cmd)
 
     # Create settings
     settings_file = path(cfg.get(CFG_SECTION, 'settings'))+'.py'

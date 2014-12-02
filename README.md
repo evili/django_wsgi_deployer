@@ -57,6 +57,9 @@ _Default_: `name`.
 ##### `build`
 Build script used to prepare your project (relative to the projects code base).
 _Default_: `'build/build.sh'`.
+##### `deploy_requires`
+List of python packages needed in deployment.
+_Default_: `None`
 ##### `wsgi`
 WSGI script name.
 _Default_:`'wsgi.py'`
