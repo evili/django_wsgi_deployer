@@ -60,6 +60,10 @@ _Default_: `'build/build.sh'`.
 ##### `deploy_requires`
 List of python packages needed in deployment.
 _Default_: `None`
+##### `deploy_commands`
+List of django commands to run for deployment (makemigrations, collectstatic,
+ etc.).
+_Default_: `None`
 ##### `wsgi`
 WSGI script name.
 _Default_:`'wsgi.py'`

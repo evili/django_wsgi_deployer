@@ -90,6 +90,13 @@ WSGIScriptAlias %(url)s %(proj_base)s/%(wsgi)s
 
 WSGI_PYTHON_PATH = u'^%s.*site-packages$'
 
+def parse_list(value):
+    """
+    Parse a string as a list of CSVs.
+    It always returns a list of string
+    s"""
+    return re.split(r', *', value)
+
 def deploy_django(proj):
     """
     Deploy a Django project
@@ -176,13 +183,11 @@ def deploy_django(proj):
     # Install Deploy Requiremts
     deploy_requires = cfg.get(CFG_SECTION, 'deploy_requires')
     if deploy_requires:
-        cmd = [os.path.join(virtualenv.path_locations()[-1],
+        logger.debug('Installing: %s', deploy_requires)
+        cmd = [os.path.join(virtualenv.path_locations(proj_base)[-1],
                             'pip')
                , 'install']
-        if isinstance(deploy_requires, 'basestring'):
-            cmd.append(deploy_requires)
-        else:
-            cmd.extend(deploy_requires)
+        cmd.extend(parse_list(deploy_requires))
         subprocess.check_call(cmd)
 
     # Create settings
@@ -238,6 +243,17 @@ def deploy_django(proj):
         sfp.close()
     finally:
         slock.release()
+
+
+    # Perform django commands
+    deploy_commands = cfg.get(CFG_SECTION, 'deploy_commands')
+    if deploy_commands:
+        manage = [os.path.join(virtualenv.path_locations(proj_base)[-1],
+                               virtualenv.expected_exe)
+                  , 'manage.py']
+        for cmd in parse_list(deploy_commands):
+            logger.debug("Executing '%s'", ' '.join(manage+[cmd])
+            subprocess.check_call(manage+[cmd])
 
     # That's it. Remember to reload apache
     print('You should reload apache:\n', '\t', 'systemctl reload httpd')

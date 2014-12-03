@@ -35,6 +35,7 @@ class TestSimpleProject(TestDeploy):
         self.test_cf = os.path.join(self.root, self.test_proj+'.cfg')
         self.test_cf_h = open(self.test_cf, 'w', buffering=1)
         print('[deploy]', file=self.test_cf_h)
+        print('name=django_test_deploy', file=self.test_cf_h)
         print('src=https://github.com/evili/'+self.test_proj+'.git',
               file=self.test_cf_h)
         print('scm=git', file=self.test_cf_h)
@@ -47,16 +48,25 @@ class TestSimpleProject(TestDeploy):
                             self.test_proj))
 
     def test_deploy_with_single_requirement(self):
-        print('name=django_test_deploy', file=self.test_cf_h)
+        print('deploy_requires=django-jenkins', file=self.test_cf_h)
         self.assertTrue(django_wsgi_deployer.deploy_django(self.test_proj),
                         msg='Could not deploy {0} project with requirement'.\
                         format(self.test_proj))
 
     def test_deploy_with_requirements(self):
-        print('name=django_test_deploy', file=self.test_cf_h)
+        print("deploy_requires=django-resto,django-jenkins", 
+              file=self.test_cf_h)
         self.assertTrue(django_wsgi_deployer.deploy_django(self.test_proj),
                         msg='Could not deploy {0} project with requirements'.\
                         format(self.test_proj))
-        
+
+    def test_with_django_commands(self):
+        print("deploy_commands=migrate,collectstatic",
+              file=self.test_cf_h)
+        self.assertTrue(django_wsgi_deployer.deploy_django(self.test_proj),
+                        msg='Could not deploy {0} project with commands'.\
+                        format(self.test_proj))
+
+
     def tearDown(self):
         self.test_cf_h.close()

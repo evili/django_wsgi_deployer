@@ -7,7 +7,7 @@ def readme():
 setup(name='django_wsgi_deployer',
       version='0.2',
       description='Django WSGI Project Deployer',
-      long_description = README.md,
+      long_description = readme(),
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Environment :: Console',
@@ -22,7 +22,6 @@ setup(name='django_wsgi_deployer',
           'Topic :: Utilities',
       ],
       keywords = 'django wsgi apache deployment',
-      
       url='https://devel.iri.upc.edu/iritic/scripts/trunk/django_wsgi_deployer',
       author='Evili del Rio',
       author_email='evili.del.rio@gmail.com',
