@@ -1,0 +1,12 @@
+branches:
+  only:
+    - master
+language: python
+python:
+  - "3.4"
+  - "2.7"
+install: python setup.py
+script: python setup.py
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y pwgen

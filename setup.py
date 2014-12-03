@@ -7,6 +7,7 @@ def readme():
 setup(name='django_wsgi_deployer',
       version='0.2',
       description='Django WSGI Project Deployer',
+      long_description = README.md,
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Environment :: Console',
