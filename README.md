@@ -1,17 +1,14 @@
 
-# ALPHA CODE -- DON'T USE IT
-
 django_deployer
 ===============
 
 
+Django Projects Deployer. It tries to automate deploying of Django
+projects/apps into an existing Apache/WSGI server.
 
-
-Django Projects Deployer. It tries to automate deploying of Django projects/apps into an
-existing Apache/WSGI server.
-
-You should prepare your apache httpd to serve WSGI scripts from a certain directory (default: /var/www/wsgi).
-Then you could edit a cfg file like this:
+You should prepare your apache httpd to serve WSGI scripts from a
+certain directory (default: /var/www/wsgi).  Then you could edit a cfg
+file like this:
 
 ###### myproject.cfg
     [deploy]

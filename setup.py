@@ -6,7 +6,7 @@ def readme():
         return f.read()
 
 setup(name='django_wsgi_deployer',
-      version='0.2',
+      version='0.2.1',
       description='Django WSGI Project Deployer',
       long_description = readme(),
       classifiers=[
@@ -23,7 +23,7 @@ setup(name='django_wsgi_deployer',
           'Topic :: Utilities',
       ],
       keywords = 'django wsgi apache deployment',
-      url='https://devel.iri.upc.edu/iritic/scripts/trunk/django_wsgi_deployer',
+      url='https://github.com/evili/django_wsgi_deployer',
       author='Evili del Rio',
       author_email='evili.del.rio@gmail.com',
       license='LGPL',
