@@ -46,7 +46,7 @@ class TestSimpleProject(TestDeploy):
         print('src=https://github.com/evili/'+self.test_proj+'.git',
               file=self.test_cf_h)
         print('scm=git', file=self.test_cf_h)
-        print('requires=django-resto')
+        print('requires=django-resto', file=self.test_cf_h)
 
     def test_deploy(self):
         """Deploy the simplest Django project"""
