@@ -10,7 +10,7 @@ setup(name='django_wsgi_deployer',
       description='Django WSGI Project Deployer',
       long_description = readme(),
       classifiers=[
-          'Development Status :: 4 - Beta'
+          'Development Status :: 4 - Beta',
           'Environment :: Console',
           'Framework :: Django',
           'Intended Audience :: Developers',
