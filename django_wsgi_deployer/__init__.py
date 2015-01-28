@@ -166,9 +166,7 @@ def deploy_django(proj):
         cfg.get(CFG_SECTION, 'scm_clone'),
         cfg.get(CFG_SECTION, 'src'),
         path(cfg.get(CFG_SECTION, 'dst')),
-    ],
-    stdin=sys.stdin,
-    stderr=sys.stderr)
+    ])
 
     # Build
     activate = path('bin/activate')
