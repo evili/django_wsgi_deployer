@@ -260,7 +260,7 @@ def deploy_django(proj):
         logger.debug('  Django settings: %s', dep_env['DJANGO_SETTINGS_MODULE'])
         for cmd in parse_list(deploy_commands):
             logger.debug("Executing '%s'", ' '.join(manage+[cmd]))
-            subprocess.check_call(manage+[cmd], env=dep_env)
+            subprocess.check_call(manage+cmd.split(), env=dep_env)
 
     # That's it. Remember to reload apache
     print('You should reload apache:\n', '\t', 'systemctl reload httpd')
