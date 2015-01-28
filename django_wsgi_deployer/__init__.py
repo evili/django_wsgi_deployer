@@ -252,7 +252,7 @@ def deploy_django(proj):
                                virtualenv.expected_exe)
                   , 'manage.py']
         for cmd in parse_list(deploy_commands):
-            logger.debug("Executing '%s'", ' '.join(manage+[cmd])
+            logger.debug("Executing '%s'", ' '.join(manage+[cmd]))
             subprocess.check_call(manage+[cmd])
 
     # That's it. Remember to reload apache
