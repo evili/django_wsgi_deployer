@@ -129,7 +129,7 @@ def deploy_django(proj):
         'wsgi': 'wsgi.py',
         'allowed_hosts': httpd_host,
         'secret_key': subprocess.check_output(secret_key_gen.split()
-                                          ).strip(),
+                                          ).strip().replace("'", "-"),
         'media_root': os.path.join(httpd_media_base, proj),
         'static_root': os.path.join(httpd_static_base, proj),
         'scm': '/usr/bin/git',
