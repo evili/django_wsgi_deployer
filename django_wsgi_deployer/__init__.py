@@ -251,9 +251,16 @@ def deploy_django(proj):
                                virtualenv.expected_exe)
                   , 'manage.py']
         os.chdir(path(cfg.get(CFG_SECTION, 'dst')))
+        # Deployment django environment
+        dep_env = os.environ.copy()
+        dep_env['DJANGO_SETTINGS_MODULE'] = cfg.get(CFG_SECTION, 'settings')
+        dep_env['PYTHONPATH'] = path('.')
+        logger.debug('Environment for commands: PYTHONPATH=%s',
+                     dep_env['PYTHONPATH'])
+        logger.debug('  Django settings: %s', dep_env['DJANGO_SETTINGS_MODULE'])
         for cmd in parse_list(deploy_commands):
             logger.debug("Executing '%s'", ' '.join(manage+[cmd]))
-            subprocess.check_call(manage+[cmd])
+            subprocess.check_call(manage+[cmd], env=dep_env)
 
     # That's it. Remember to reload apache
     print('You should reload apache:\n', '\t', 'systemctl reload httpd')

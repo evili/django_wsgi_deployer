@@ -18,11 +18,17 @@ class TestDeploy(TestCase):
         self.root = tempfile.mkdtemp(prefix='test_dj_deploy-', suffix='.d')
         self.wsgi_base = os.path.join(self.root, 'wsgi')
         self.httpd_conf = os.path.join(self.root, 'httpd')
+        self.httpd_static = os.path.join(self.root, 'static')
+        self.httpd_media = os.path.join(self.root, 'media')
         os.environ['WSGI_BASE_PATH'] = self.wsgi_base
         os.environ['HTTPD_CONF_DIR'] = self.httpd_conf
+        os.environ['HTTPD_STATIC_BASE'] = self.httpd_static
+        os.environ['HTTPD_MEDIA_BASE'] = self.httpd_media
         os.chdir(self.root)
         os.mkdir(self.wsgi_base)
         os.mkdir(self.httpd_conf)
+        os.mkdir(self.httpd_static)
+        os.mkdir(self.httpd_media)
 
     def tearDown(self):
         shutil.rmtree(self.root)
@@ -62,7 +68,7 @@ class TestSimpleProject(TestDeploy):
                         format(self.test_proj))
 
     def test_with_django_commands(self):
-        print("deploy_commands=migrate,collectstatic",
+        print("deploy_commands=migrate,collectstatic --noinput",
               file=self.test_cf_h)
         self.assertTrue(django_wsgi_deployer.deploy_django(self.test_proj),
                         msg='Could not deploy {0} project with commands'.\
