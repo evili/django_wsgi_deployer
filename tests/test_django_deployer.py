@@ -6,8 +6,9 @@ from unittest import TestCase
 import tempfile
 import os
 import shutil
+import sys
 import subprocess
-
+import shutil
 import django_wsgi_deployer
 
 
@@ -76,4 +77,10 @@ class TestSimpleProject(TestDeploy):
 
 
     def tearDown(self):
+        _KEEP_TEMP = 'KEEP_TEMP_FILES'
         self.test_cf_h.close()
+        if os.environ.has_key(_KEEP_TEMP):
+            print('Keeping root directory: %s' % self.root, file=sys.stderr)
+        else:
+            print('Deleting root tree: %s' % self.root, file=sys.stderr)
+            shutil.rmtree(self.root)
