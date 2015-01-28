@@ -6,11 +6,11 @@ def readme():
         return f.read()
 
 setup(name='django_wsgi_deployer',
-      version='0.2.1',
+      version='0.3.0',
       description='Django WSGI Project Deployer',
       long_description = readme(),
       classifiers=[
-          'Development Status :: 3 - Alpha',
+          'Development Status :: 4 - Beta'
           'Environment :: Console',
           'Framework :: Django',
           'Intended Audience :: Developers',
