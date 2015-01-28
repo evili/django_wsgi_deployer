@@ -135,6 +135,7 @@ def deploy_django(proj):
         'scm': '/usr/bin/git',
         'settings_append': DEFAULT_SETTINGS_APPEND,
         'deploy_requires': None,
+        'deploy_commands': ['migrate']
     }
 
     # Protect '%' from interpolation
@@ -249,6 +250,7 @@ def deploy_django(proj):
         manage = [os.path.join(virtualenv.path_locations(proj_base)[-1],
                                virtualenv.expected_exe)
                   , 'manage.py']
+        os.chdir(path(cfg.get(CFG_SECTION, 'dst')))
         for cmd in parse_list(deploy_commands):
             logger.debug("Executing '%s'", ' '.join(manage+[cmd]))
             subprocess.check_call(manage+[cmd])

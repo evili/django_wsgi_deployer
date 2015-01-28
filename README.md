@@ -63,7 +63,7 @@ _Default_: `None`
 ##### `deploy_commands`
 List of django commands to run for deployment (makemigrations, collectstatic,
  etc.).
-_Default_: `None`
+_Default_: `migrate`
 ##### `wsgi`
 WSGI script name.
 _Default_:`'wsgi.py'`

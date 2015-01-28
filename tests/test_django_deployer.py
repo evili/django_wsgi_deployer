@@ -6,6 +6,7 @@ from unittest import TestCase
 import tempfile
 import os
 import shutil
+import subprocess
 
 import django_wsgi_deployer
 
