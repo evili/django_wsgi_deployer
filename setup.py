@@ -6,7 +6,7 @@ def readme():
         return f.read()
 
 setup(name='django_wsgi_deployer',
-      version='0.3.0',
+      version='0.3.1',
       description='Django WSGI Project Deployer',
       long_description = readme(),
       classifiers=[
@@ -27,7 +27,7 @@ setup(name='django_wsgi_deployer',
       author='Evili del Rio',
       author_email='evili.del.rio@gmail.com',
       license='LGPL',
-      install_requires=['virtualenv', 'lockfile'],
+      install_requires=['virtualenv', 'lockfile', 'six'],
       packages=['django_wsgi_deployer'],
       scripts=['bin/django_wsgi_deploy'],
       test_suite='nose.collector',

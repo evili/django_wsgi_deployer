@@ -12,7 +12,7 @@ import re
 import platform
 import logging
 
-from ConfigParser import SafeConfigParser
+from six.moves.configparser import SafeConfigParser
 from lockfile import LockFile
 
 
