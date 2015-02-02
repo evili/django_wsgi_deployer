@@ -31,7 +31,7 @@ setup(name='django_wsgi_deployer',
       packages=['django_wsgi_deployer'],
       scripts=['bin/django_wsgi_deploy'],
       test_suite='nose.collector',
-      tests_require=['nose'],
+      tests_require=['nose','coverage'],
       zip_safe=False)
 
 
