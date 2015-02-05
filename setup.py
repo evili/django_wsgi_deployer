@@ -6,7 +6,7 @@ def readme():
         return f.read()
 
 setup(name='django_wsgi_deployer',
-      version='0.3.2',
+      version='0.3.3',
       description='Django WSGI Project Deployer',
       long_description = readme(),
       classifiers=[
@@ -31,7 +31,6 @@ setup(name='django_wsgi_deployer',
       packages=['django_wsgi_deployer'],
       scripts=['bin/django_wsgi_deploy'],
       test_suite='nose.collector',
-      tests_require=['nose','coverage'],
-      zip_safe=False)
+      tests_require=['nose','coverage'])
 
 
